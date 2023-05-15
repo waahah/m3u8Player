@@ -29,7 +29,7 @@ $(document).ready(() => {
                     },
                 },
                 video: {
-                    url: "",//"http://113.62.253.22/live.aishang.ctlcdn.com/00000110240316_1/encoder/0/playlist.m3u8?CONTENTID=00000110240316_1&AUTHINFO=FABqh274XDn8fkurD5614t%2B1RvYajgx%2Ba3PxUJe1SMO4OjrtFitM6ZQbSJEFffaD35hOAhZdTXOrK0W8QvBRom%2BXaXZYzB%2FQfYjeYzGgKhP%2Fdo%2BXpr4quVxlkA%2BubKvbU1XwJFRgrbX%2BnTs60JauQUrav8kLj%2FPH8LxkDFpzvkq75UfeY%2FVNDZygRZLw4j%2BXtwhj%2FIuXf1hJAU0X%2BheT7g%3D%3D&USERTOKEN=eHKuwve%2F35NVIR5qsO5XsuB0O2BhR0KR", //'https://hw-m-l.cztv.com/channels/lantian/channel012/1080p.m3u8'
+                    url: "https://hw-m-l.cztv.com/channels/lantian/channel012/1080p.m3u8", //"http://113.62.253.22/live.aishang.ctlcdn.com/00000110240316_1/encoder/0/playlist.m3u8?CONTENTID=00000110240316_1&AUTHINFO=FABqh274XDn8fkurD5614t%2B1RvYajgx%2Ba3PxUJe1SMO4OjrtFitM6ZQbSJEFffaD35hOAhZdTXOrK0W8QvBRom%2BXaXZYzB%2FQfYjeYzGgKhP%2Fdo%2BXpr4quVxlkA%2BubKvbU1XwJFRgrbX%2BnTs60JauQUrav8kLj%2FPH8LxkDFpzvkq75UfeY%2FVNDZygRZLw4j%2BXtwhj%2FIuXf1hJAU0X%2BheT7g%3D%3D&USERTOKEN=eHKuwve%2F35NVIR5qsO5XsuB0O2BhR0KR", 
                     type: "customHls",
                     customType: {
                         customHls:  (video, player) => {
@@ -38,7 +38,7 @@ $(document).ready(() => {
                             // DNS解析、下载超时，都会触发manifestLoadError错误
                             hls.on(Hls.Events.ERROR, (eventName, data) => {
                                 // 埋点上报，可以追踪data.details
-                                console.log(`${eventName}错误:详情${data.details}`)
+                                reject(new Error(`${eventName}错误:详情${data.details}`));
                             });
                             hls.loadSource(video.src);
                             hls.attachMedia(video);
@@ -93,22 +93,24 @@ $(document).ready(() => {
 
     //回调函数
     const changeUrl = (link, promise, senddan) => {
-        try {
-            promise.then(dp => {
+        promise.then(
+            dp => {
                 dp.switchVideo(
                     {
                         url: link,
                     })
-                if(senddan != undefined && typeof senddan == 'function'){
+                if (senddan != undefined && typeof senddan == 'function') {
                     senddan(dp);
-                }else{
+                } else {
                     throw new Error(`第三个参数${senddan}不是函数`);
                 }
-            });
-        } catch (error) {
-            console.log(error);
-        }
-
+            }
+        ).catch(
+            err => {
+                console.log(err);
+                toast(`错误:${err}`);
+            }
+        );
     }
 
     const getRequest = async () => {
@@ -156,7 +158,7 @@ $(document).ready(() => {
             let link = await getUrl();
             let url = check(link);
             if (url) {
-                promise = player();
+                const promise = player();
                 changeUrl(url, promise, senddan);
             }
         }
@@ -220,7 +222,7 @@ $(document).ready(() => {
         let url = check(link);
         if (url) {
             //回调函数
-            promise = once(player).callback_func();
+            const promise = once(player).callback_func();
             changeUrl(url, promise, senddan);
         }
         //event.preventDefault();
@@ -236,8 +238,15 @@ $(document).ready(() => {
     }
 
     (async () => {
-        await synctime();
         await add_modal();
-    })();
+    })().then(
+        async () => {
+            await synctime();
+        },
+        err => {
+            console.log(err);
+            toast(err);
+        }
+    );
 
 });
