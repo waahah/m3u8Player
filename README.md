@@ -14,4 +14,4 @@
 - 播放http协议的m3u8链接时无法播放This request has been blocked; the content must be served over HTTPS
 > 如`M3U8`视频/直播URL是 http 协议，则可以使用 `http://m3u8.waahah.xyz/` 来访问应用程序的 `HTTP` 版本。
 - 访问 http 协议地址浏览器自动重定向到`https://m3u8.waahah.xyz/` ？
-> 请使用浏览器的`无痕模式`(InPrivate)再行访问 http://m3u8.waahah.xyz
+> 请使用浏览器的`无痕模式`(InPrivate)或清空网站缓存再行访问 http://m3u8.waahah.xyz
