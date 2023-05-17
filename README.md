@@ -6,7 +6,7 @@
 
 ---
 
-### 调用解析接口
+### 调用接口方式
 > [http://m3u8.waahah.xyz/?waahah=此处替换为链接](http://m3u8.waahah.xyz/?waahah=)
 ---
 
