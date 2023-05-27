@@ -237,6 +237,10 @@ $(document).ready(() => {
         copyright.innerHTML = `Copyright © ${startyear} - ${String(endyear)} <a href='https://github.com/waahah/m3u8Player' style="color:#007bff;">waahah</a> All Rights Reserved.`
     }
 
+    /*
+    then的第二个参数捕捉调用then方法之前的异常，而无法捕捉then方法中产生的异常，
+    then方法之后接回调函数.catch()方法则可以捕捉调用then方法前后全程产生的异常
+    */
     (async () => {
         await add_modal();
     })().then(
